@@ -1,18 +1,23 @@
-import {defineConfig, CookieSessionStorage} from '@shopify/hydrogen/config';
+import {
+  defineConfig,
+  CookieSessionStorage,
+  PerformanceMetricsServerAnalyticsConnector,
+} from '@shopify/hydrogen/config';
 
 export default defineConfig({
-  shopify: {
-    defaultCountryCode: 'US',
+  shopify: () => ({
     defaultLanguageCode: 'EN',
-    storeDomain: 'drink-javy.myshopify.com',
-    storefrontToken: 'e7798126aeb22dcfbf534f0a8036163f',
+    defaultCountryCode: 'US',
+    storeDomain: Oxygen.env.SHOPIFY_STORE_DOMAIN,
+    storefrontToken: Oxygen.env.SHOPIFY_STOREFRONT_API_PUBLIC_TOKEN,
     storefrontApiVersion: '2022-07',
-  },
+  }),
   session: CookieSessionStorage('__session', {
     path: '/',
     httpOnly: true,
-    secure: import.meta.env.PROD,
-    sameSite: 'Strict',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
     maxAge: 60 * 60 * 24 * 30,
   }),
+  serverAnalyticsConnectors: [PerformanceMetricsServerAnalyticsConnector],
 });
